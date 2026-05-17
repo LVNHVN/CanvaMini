@@ -1,178 +1,253 @@
-# 🎨 Canva Clone - Full-Featured Graphic Design SaaS Platform
+# Canvar — Canva Clone
 
-<img width="5706" height="1806" alt="canva-clone" src="/canva-clone.png" />
-
-A production-ready graphic design SaaS platform with an intuitive drag-and-drop editor, AI-powered features, and complete subscription management. Built with Next.js 14, Fabric.js canvas engine, Replicate AI, and Stripe payments.
+Ứng dụng thiết kế đồ họa trên nền web, clone từ Canva. Tích hợp AI chat (Gemini), xác thực OAuth, upload ảnh, và lưu trữ dự án trên database.
 
 ---
 
-## 🚀 Quick Start
+## Tính năng
 
-**New to this project?** Follow our step-by-step setup guide:
-
-### 📖 [Complete Setup Documentation](./docs/README/)
-
-Start here: **[00-PREREQUISITES.md](./docs/README/00-PREREQUISITES.md)**
-
-**Estimated setup time:** ~90 minutes
-
----
-
-## ✨ Key Features
-
-- 🎨 **Professional Design Editor** - Templates, text, shapes, drawing tools, and layers
-- 🤖 **AI-Powered Tools** - Image generation and background removal
-- 🔐 **Multi-Auth** - Google, GitHub, and Email/Password
-- 💳 **Stripe Subscriptions** - Complete payment management
-- 📤 **Export Options** - PNG, JPG, SVG, JSON
-- 📱 **Fully Responsive** - Works on all devices
-- 🔍 **Project Management** - Create and organize multiple projects
-- 🎯 **Unsplash Integration** - Millions of free stock photos
+- Editor canvas kéo thả (Fabric.js)
+- Shapes, text, image, filter, draw, opacity
+- AI Chat (Gemini) — tạo thiết kế từ prompt
+- Đăng nhập GitHub / Google
+- Upload ảnh (UploadThing)
+- Lưu / tải project tự động (NeonDB)
+- Export PNG, JPG, SVG, JSON
+- Undo / Redo, Zoom, Copy/Paste
 
 ---
 
-## 🛠️ Tech Stack
+## Yêu cầu
 
-**Frontend:** Next.js 14, React 18, TypeScript, TailwindCSS, Shadcn UI, Fabric.js  
-**Backend:** Hono.js, Drizzle ORM, Neon PostgreSQL, Auth.js  
-**AI & Media:** Replicate AI, Unsplash, UploadThing  
-**Payments:** Stripe  
-**State:** Zustand, TanStack Query
+- Node.js 18+
+- npm hoặc bun
 
 ---
 
-## 📋 Prerequisites
-
-Before starting, you need:
-- Node.js (v18+) or Bun
-- Git
-- Free accounts for: Neon, UploadThing, Replicate, Unsplash, Stripe, Google, GitHub
-
-**👉 See [Prerequisites Guide](./docs/README/00-PREREQUISITES.md) for details**
-
----
-
-## 🎯 Setup Guide
-
-Follow these guides in order:
-
-1. **[Prerequisites](./docs/README/00-PREREQUISITES.md)** - What you need (2 min)
-2. **[Installation](./docs/README/01-INSTALLATION.md)** - Clone and install (5 min)
-3. **[Database Setup](./docs/README/02-DATABASE-SETUP.md)** - Neon PostgreSQL (10 min)
-4. **[Unsplash API](./docs/README/03-UNSPLASH-API.md)** - Stock photos (5 min)
-5. **[UploadThing API](./docs/README/04-UPLOADTHING-API.md)** - File uploads (5 min)
-6. **[Replicate API](./docs/README/05-REPLICATE-API.md)** - AI features (10 min)
-7. **[Stripe Setup](./docs/README/06-STRIPE-SETUP.md)** - Payments (20 min)
-8. **[Templates Setup](./docs/README/07-TEMPLATES-SETUP.md)** - Design templates (15 min)
-9. **[GitHub OAuth](./docs/README/08-GITHUB-OAUTH.md)** - GitHub login (5 min)
-10. **[Google OAuth](./docs/README/09-GOOGLE-OAUTH.md)** - Google login (10 min)
-11. **[Deployment](./docs/README/10-DEPLOYMENT.md)** - Deploy to Vercel (15 min)
-
-**Need help?** Check [Troubleshooting Guide](./docs/README/11-TROUBLESHOOTING.md)
-
----
-
-## 📦 Quick Commands
+## Cài đặt
 
 ```bash
-# Install dependencies
-bun install
-
-# Setup database
-bun run db:generate
-bun run db:migrate
-
-# Start development
-bun dev
-
-# Open database GUI
-bun run db:studio
+git clone https://github.com/fuongzz/CanvarMini
+cd CanvarMini/canva-clone
+npm install
 ```
-
-**Full command reference:** See [Installation Guide](./docs/README/01-INSTALLATION.md)
 
 ---
 
-## 🔧 Environment Variables
+## Cấu hình biến môi trường
 
-Create a `.env` file with these variables:
+Tạo file `.env.local` tại thư mục `canva-clone/`:
+
+```bash
+cp .env.example .env.local
+```
+
+Sau đó điền các giá trị theo hướng dẫn bên dưới.
+
+---
+
+## Hướng dẫn đăng ký từng dịch vụ
+
+### 1. AUTH_SECRET — Tự tạo (bắt buộc)
+
+```bash
+npx auth secret
+```
+
+Dán kết quả vào:
+```
+AUTH_SECRET=<kết quả ở trên>
+```
+
+---
+
+### 2. NeonDB — Database PostgreSQL (bắt buộc)
+
+1. Vào [neon.tech](https://neon.tech) → Sign up → **Create Project**
+2. Đặt tên project bất kỳ, chọn region gần nhất (Singapore cho VN)
+3. Vào **Dashboard → Connection string** → copy chuỗi dạng:
+   ```
+   postgresql://user:password@host/dbname?sslmode=require
+   ```
+4. Dán vào `.env.local`:
+   ```
+   DATABASE_URL=postgresql://...
+   ```
+5. Chạy migration:
+   ```bash
+   npx drizzle-kit migrate
+   ```
+
+---
+
+### 3. GitHub OAuth (bắt buộc để login)
+
+1. Vào [github.com/settings/developers](https://github.com/settings/developers) → **OAuth Apps** → **New OAuth App**
+2. Điền:
+   - **Application name**: Canvar (hoặc bất kỳ)
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/callback/github`
+3. Nhấn **Register application**
+4. Copy **Client ID** và tạo **Client Secret** → dán vào:
+   ```
+   AUTH_GITHUB_ID=...
+   AUTH_GITHUB_SECRET=...
+   ```
+
+---
+
+### 4. Google OAuth (bắt buộc để login)
+
+1. Vào [console.cloud.google.com](https://console.cloud.google.com) → tạo project mới
+2. Vào **APIs & Services → Credentials → Create Credentials → OAuth client ID**
+3. Application type: **Web application**
+4. Thêm **Authorized redirect URIs**:
+   ```
+   http://localhost:3000/api/auth/callback/google
+   ```
+5. Copy **Client ID** và **Client Secret** → dán vào:
+   ```
+   AUTH_GOOGLE_ID=...
+   AUTH_GOOGLE_SECRET=...
+   ```
+
+> Nếu thấy lỗi "OAuth consent screen", vào **OAuth consent screen** → chọn External → điền App name, email → Save.
+
+---
+
+### 5. Gemini AI (bắt buộc cho AI Chat)
+
+1. Vào [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) → **Create API key**
+2. Dán vào:
+   ```
+   GEMINI_API_KEY=...
+   ```
+
+> Free tier: ~1,500 request/ngày. Không cần thẻ tín dụng.
+
+---
+
+### 6. UploadThing — Upload ảnh (bắt buộc cho Image tab)
+
+1. Vào [uploadthing.com](https://uploadthing.com) → Sign in → **Create App**
+2. Đặt tên app → vào **API Keys**
+3. Copy **Secret Key** và **App ID** → dán vào:
+   ```
+   UPLOADTHING_SECRET=sk_live_...
+   UPLOADTHING_APP_ID=...
+   ```
+
+> Free tier: 2GB storage + 2GB bandwidth/tháng.
+
+---
+
+### 7. Unsplash — Ảnh stock miễn phí (tùy chọn)
+
+1. Vào [unsplash.com/developers](https://unsplash.com/developers) → **New Application**
+2. Điền thông tin → copy **Access Key** → dán vào:
+   ```
+   NEXT_PUBLIC_UNSPLASH_ACCESS_KEY=...
+   ```
+
+> Nếu bỏ trống, tab Images sẽ không hiển thị ảnh stock.
+
+---
+
+### 8. Replicate — AI generate image & remove background (tùy chọn)
+
+1. Vào [replicate.com/account/api-tokens](https://replicate.com/account/api-tokens) → **Create token**
+2. Dán vào:
+   ```
+   REPLICATE_API_TOKEN=r8_...
+   ```
+
+> Tính phí theo lần dùng (~$0.001–0.05/request). Nếu bỏ trống, tính năng AI image generation và remove background sẽ báo lỗi, các tính năng khác vẫn hoạt động bình thường.
+
+---
+
+### 9. Stripe — Subscription / thanh toán (tùy chọn)
+
+1. Vào [dashboard.stripe.com/test/apikeys](https://dashboard.stripe.com/test/apikeys)
+2. Copy **Secret key** (bắt đầu bằng `sk_test_`) → dán vào `STRIPE_SECRET_KEY`
+3. Tạo Product và Price trong Stripe → copy **Price ID** → dán vào `STRIPE_PRICE_ID`
+4. Webhook secret lấy qua Stripe CLI hoặc Dashboard → `STRIPE_WEBHOOK_SECRET`
+
+> Nếu bỏ trống, nút Upgrade/Subscribe sẽ không hoạt động, toàn bộ tính năng miễn phí vẫn dùng được.
+
+---
+
+## File .env.local hoàn chỉnh
 
 ```env
-DATABASE_URL=
-AUTH_SECRET=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_UNSPLASH_ACCESS_KEY=
+
+# Auth
+AUTH_SECRET=<chạy: npx auth secret>
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+
+# Database
+DATABASE_URL=postgresql://...
+
+# Gemini AI Chat
+GEMINI_API_KEY=
+
+# UploadThing
 UPLOADTHING_SECRET=
 UPLOADTHING_APP_ID=
-UPLOADTHING_TOKEN=
+
+# Unsplash (tùy chọn)
+NEXT_PUBLIC_UNSPLASH_ACCESS_KEY=
+
+# Replicate (tùy chọn)
 REPLICATE_API_TOKEN=
+
+# Stripe (tùy chọn)
 STRIPE_SECRET_KEY=
 STRIPE_PRICE_ID=
 STRIPE_WEBHOOK_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
 ```
 
-**Detailed guide:** [Environment Variables Reference](./docs/README/12-ENV-REFERENCE.md)
+---
+
+## Chạy dự án
+
+```bash
+# Chạy migration database (chỉ cần làm 1 lần)
+npx drizzle-kit migrate
+
+# Khởi động dev server
+npm run dev
+```
+
+Mở [http://localhost:3000](http://localhost:3000) — đăng nhập bằng GitHub hoặc Google.
 
 ---
 
-## 💎 Pro Features
+## Lưu ý quan trọng
 
-Unlock with subscription:
-- ✨ Unlimited projects
-- 🎨 Premium templates
-- 🤖 Unlimited AI generations
-- 📤 High-resolution exports
-- 💾 Priority support
+- **OAuth callback URL phải khớp với port đang chạy.** Mặc định là `3000`. Nếu port bị chiếm và app chạy ở `3001`, login sẽ thất bại — hãy tắt process khác đang dùng port 3000 rồi chạy lại.
+- **Không commit `.env.local`** — file này đã có trong `.gitignore`, API keys của bạn sẽ không bị đẩy lên GitHub.
+- **Sau khi thay đổi `.env.local`**, phải restart dev server để Next.js đọc lại biến môi trường.
 
 ---
 
-## 📚 Documentation
+## Tech Stack
 
-- **[Setup Guides](./docs/README/)** - Complete step-by-step setup
-- **[Troubleshooting](./docs/README/11-TROUBLESHOOTING.md)** - Common issues and solutions
-- **[Environment Variables](./docs/README/12-ENV-REFERENCE.md)** - All variables explained
-
----
-
-## 🎓 Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Drizzle ORM Documentation](https://orm.drizzle.team/docs)
-- [Auth.js Documentation](https://authjs.dev/)
-- [Fabric.js Documentation](http://fabricjs.com/docs/)
-- [Stripe Documentation](https://stripe.com/docs)
-- [Replicate Documentation](https://replicate.com/docs)
-
----
-
-## 🙏 Credits
-
-**Course:** [YouTube/Original Tutorial](https://www.codewithantonio.com/projects/canva-clone) (18-hour course)  
-**Creator:** [Code With Antonio](https://github.com/antonioerdeljac)  
-**Deployment:** [Vercel](https://vercel.com/)  
-**UI Components:** [Shadcn](https://ui.shadcn.com/)
-
----
-
-## 📝 License
-
-This project is based on the tutorial by Antonio Erdeljac.
-
----
-
-## ⭐ Support
-
-If you found this project helpful, please give it a star!
-
-**Need help?** 
-- Check [Documentation](./docs/NOTE.md)
-- Review [Troubleshooting](./docs/README/11-TROUBLESHOOTING.md)
-- Create an issue on GitHub
-
----
-
-**Ready to start?** → Begin with **[Prerequisites Guide](./docs/README/00-PREREQUISITES.md)** 🚀
+| Công nghệ | Dùng cho |
+|-----------|----------|
+| Next.js 14 | Framework |
+| Fabric.js 5 | Canvas editor |
+| Drizzle ORM | Database ORM |
+| NeonDB | PostgreSQL serverless |
+| NextAuth v5 | Authentication |
+| Hono | API router |
+| UploadThing | File upload |
+| Gemini API | AI Chat |
+| Replicate | AI image gen |
+| Stripe | Payments |
+| TanStack Query | Data fetching |
+| Tailwind CSS | Styling |
+| shadcn/ui | UI components |
